@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
-import Portal from "../_components/portal";
-import { portals } from "../_data/portals";
+import Portal from "@/features/workspace/portal";
+import { portals } from "@/data/catalog/portals";
 
 export default async function Page({ params }) {
   const { portal } = await params;

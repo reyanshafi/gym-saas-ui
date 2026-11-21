@@ -1,7 +1,8 @@
-﻿import "@fontsource-variable/inter";
+import "@fontsource-variable/inter";
 import "./globals.css";
-import "./_styles/management.css";
-import "./_styles/gym-dashboard.css";
+import "@/shared/styles/management.css";
+import "@/features/records/record-form-drawer.css";
+import "@/features/dashboard/gym-dashboard.css";
 
 export const metadata = {
   title: { default: "GymSaas", template: "%s · GymSaas" },

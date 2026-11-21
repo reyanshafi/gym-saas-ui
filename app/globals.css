@@ -1,6 +1,6 @@
 @import "tailwindcss";
-@import "./_styles/workspace.css";
-@import "./_styles/login.css";
+@import "../src/shared/styles/workspace.css";
+@import "../src/shared/styles/login.css";
 
 :root {
   --font-sans: "Inter Variable", "Segoe UI", system-ui, sans-serif;

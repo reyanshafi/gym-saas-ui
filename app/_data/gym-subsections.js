@@ -1,0 +1,76 @@
+import { Boxes, CalendarDays, Layers3, Receipt, Wallet } from "lucide-react";
+
+export const gymSubsections = {
+  "plan-categories": [
+    Layers3,
+    "Plan Categories",
+    "Organize membership plans by category.",
+    ["Category", "Description"],
+    [["Standard", "Core gym access"]],
+  ],
+  "expense-categories": [
+    Layers3,
+    "Expense Categories",
+    "Organize expenditure for reporting.",
+    ["Category", "Description"],
+    [
+      ["Rent", "Premises rent"],
+      ["Equipment Maintenance", "Servicing and repairs"],
+      ["Cleaning", "Cleaning services and supplies"],
+      ["Supplies", "Operating supplies"],
+      ["Maintenance", "General maintenance"],
+      ["Electricity", "Power bills"],
+      ["Water", "Water bills"],
+      ["Internet", "Connectivity"],
+      ["Staff Salaries", "Compensation"],
+      ["Marketing", "Promotions"],
+      ["Office Supplies", "Administrative supplies"],
+      ["Other Expenses", "Miscellaneous costs"],
+    ],
+  ],
+  "recurring-expenses": [
+    Receipt,
+    "Recurring Expenses",
+    "Track scheduled operating expenses.",
+    ["Expense", "Category", "Amount", "Frequency", "Next date"],
+    [["Monthly rent", "Rent", "68000", "Monthly", "2026-12-01"]],
+  ],
+  "staff-compensation": [
+    Wallet,
+    "Salary & Compensation",
+    "Record staff salary and commission payments.",
+    ["Staff member", "Type", "Amount", "Payment date", "Status"],
+    [["Kabir Singh", "Salary", "28000", "2026-11-01", "Paid"]],
+  ],
+  "staff-leave": [
+    CalendarDays,
+    "Leave Management",
+    "Track and review leave requests.",
+    ["Staff member", "Start date", "End date", "Reason", "Status"],
+    [["Riya Menon", "2026-11-25", "2026-11-26", "Personal leave", "Pending"]],
+  ],
+  "product-categories": [
+    Layers3,
+    "Product Categories",
+    "Organize your catalog.",
+    ["Category", "Description"],
+    [
+      ["Supplements", "Nutrition products"],
+      ["Accessories", "Training accessories"],
+    ],
+  ],
+  suppliers: [
+    Boxes,
+    "Suppliers",
+    "Maintain useful supplier contacts.",
+    ["Supplier", "Email", "Phone"],
+    [["Peak Nutrition", "orders@example.com", ""]],
+  ],
+  purchases: [
+    Receipt,
+    "Purchase History",
+    "Record product purchases.",
+    ["Product", "Supplier", "Quantity", "Amount", "Purchase date"],
+    [["Whey protein", "Peak Nutrition", "10", "14000", "2026-11-18"]],
+  ],
+};

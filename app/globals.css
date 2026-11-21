@@ -1,0 +1,58 @@
+@import "tailwindcss";
+@import "./_styles/workspace.css";
+@import "./_styles/login.css";
+
+:root {
+  --font-sans: "Inter Variable", "Segoe UI", system-ui, sans-serif;
+  --canvas: #f4f6f4;
+  --surface: #fff;
+  --ink: #17241e;
+  --muted: #53635b;
+  --line: #dce4de;
+  --accent: #176544;
+  --tint: #e8f2eb;
+  --nav: #172820;
+}
+
+body {
+  background: var(--canvas);
+  color: var(--ink);
+  font-family: var(--font-sans), "Segoe UI", system-ui, sans-serif;
+}
+
+button,
+select {
+  cursor: pointer;
+}
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.brand {
+  @apply flex items-center gap-3 text-xl font-bold tracking-tight;
+}
+.brand-mark {
+  @apply grid size-9 place-items-center rounded-lg text-white;
+  background: var(--accent);
+}
+.eyebrow {
+  @apply text-xs font-bold tracking-widest;
+}
+.button {
+  @apply inline-flex min-h-10 items-center rounded-lg px-4 py-2 text-sm font-semibold transition-colors;
+}
+.primary {
+  background: var(--accent);
+  color: white;
+}
+.primary:hover {
+  filter: brightness(0.9);
+}
+.secondary {
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+.secondary:hover {
+  background: var(--tint);
+}

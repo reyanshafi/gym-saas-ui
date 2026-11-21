@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useId, useRef } from "react";
 import { Ellipsis, Eye, Pencil, Trash2 } from "lucide-react";
 
@@ -11,6 +12,7 @@ export default function RecordActions({
   onDuplicate,
   onView,
   viewLabel,
+  viewHref,
   statusActions = [],
   onStatus,
 }) {
@@ -20,7 +22,8 @@ export default function RecordActions({
   function positionMenu(event) {
     const { right, top, bottom } = event.currentTarget.getBoundingClientRect();
     const above =
-      window.innerHeight - bottom < (onView || onDuplicate ? 150 : 110);
+      window.innerHeight - bottom <
+      (onView || viewHref || onDuplicate ? 150 : 110);
     Object.assign(menu.current.style, {
       right: Math.max(12, window.innerWidth - right) + "px",
       top: above ? "auto" : bottom + 6 + "px",
@@ -33,7 +36,16 @@ export default function RecordActions({
     action();
   }
 
-  if (!onView && !onEdit && !onDelete && !onAdjust) return null;
+  if (
+    !viewHref &&
+    !onView &&
+    !onEdit &&
+    !onDelete &&
+    !onAdjust &&
+    !onDuplicate &&
+    !statusActions.length
+  )
+    return null;
 
   return (
     <>
@@ -55,13 +67,22 @@ export default function RecordActions({
         role="group"
         aria-label={`Actions for ${name}`}
       >
+        {viewHref && (
+          <Link href={viewHref} onClick={() => menu.current.hidePopover()}>
+            <Eye size={15} /> {viewLabel}
+          </Link>
+        )}
         {onView && (
           <button type="button" autoFocus onClick={() => run(onView)}>
             <Eye size={15} /> {viewLabel}
           </button>
         )}
         {onEdit && (
-          <button type="button" autoFocus={!onView} onClick={() => run(onEdit)}>
+          <button
+            type="button"
+            autoFocus={!onView && !viewHref}
+            onClick={() => run(onEdit)}
+          >
             <Pencil size={15} /> Edit
           </button>
         )}

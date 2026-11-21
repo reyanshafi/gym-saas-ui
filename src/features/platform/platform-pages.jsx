@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRecords } from "@/data/records/use-records";
+import TenantPicker from "@/features/platform/tenant-picker";
 import { profiles } from "@/features/records/profiles";
 import { inr, paidAmount } from "@/features/billing/gym-finance";
 import { matchesPeriod, summarize } from "@/shared/lib/reporting";
@@ -10,10 +11,11 @@ import PageKpis from "@/shared/ui/page-kpis";
 import { paymentKpis } from "@/features/records/section-kpis";
 import Records from "@/shared/ui/records";
 
-export function TenantDirectory({ sections }) {
+export function TenantDirectory({ sections, tenantId }) {
   const { records } = useRecords("platform", "tenants", sections.tenants[4]);
-  const [selected, setSelected] = useState("");
-  const tenant = records.find((record) => record.id === selected) ?? records[0];
+  const tenant = tenantId
+    ? records.find((record) => record.id === tenantId)
+    : records[0];
   const fields = [
     ...sections.tenants[3],
     ...profiles.tenants.fields.map((field) => field.label),
@@ -22,20 +24,17 @@ export function TenantDirectory({ sections }) {
     <section className="panel">
       <div className="panel-header">
         <h2>{tenant?.values[0] ?? "Tenant profile"}</h2>
-        <select
-          className="filter-select"
-          aria-label="Select tenant"
-          value={tenant?.id ?? ""}
-          onChange={(event) => setSelected(event.target.value)}
-        >
-          {!tenant && <option value="">No tenants</option>}
-          {records.map(({ id, values }) => (
-            <option key={id} value={id}>
-              {values[0]}
-            </option>
-          ))}
-        </select>
+        <TenantPicker records={records} selected={tenant} />
       </div>
+      {!tenant && (
+        <div className="dialog-body">
+          <p>
+            {tenantId
+              ? "This tenant could not be found. Select another tenant to view its details."
+              : "No tenants have been added yet."}
+          </p>
+        </div>
+      )}
       {tenant && (
         <div className="dialog-body">
           <dl className="profile-fields">

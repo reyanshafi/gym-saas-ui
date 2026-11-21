@@ -144,7 +144,7 @@
   color: var(--ink);
   box-shadow: 0 8px 24px #15243b24;
 }
-.record-actions button {
+.record-actions :is(button, a) {
   display: flex;
   align-items: center;
   gap: 0.55rem;
@@ -154,7 +154,7 @@
   font-size: 0.875rem;
   text-align: left;
 }
-.record-actions button:hover {
+.record-actions :is(button, a):hover {
   background: var(--tint);
 }
 .record-actions .delete-action {
@@ -610,4 +610,69 @@ html:has(.shell.gym)::-webkit-scrollbar-thumb:is(:hover, :active) {
 }
 .plan-feature-preview ul {
   list-style: disc inside;
+}
+
+.tenant-picker-trigger {
+  min-width: 0;
+  max-width: 100%;
+}
+.tenant-picker-trigger > span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.tenant-picker-trigger > svg {
+  flex-shrink: 0;
+}
+.tenant-picker {
+  position: fixed;
+  inset: auto;
+  right: var(--tenant-picker-right, 0.75rem);
+  display: none;
+  width: 22rem;
+  max-width: calc(100vw - var(--tenant-picker-right, 0.75rem) - 0.75rem);
+  margin: 0;
+  padding: 0.55rem;
+  border: 1px solid var(--line);
+  border-radius: 0.65rem;
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: 0 10px 28px #15243b26;
+}
+.tenant-picker:popover-open {
+  display: flex;
+  flex-direction: column;
+}
+.tenant-picker-search {
+  flex: 0 0 auto;
+}
+.tenant-picker-search input {
+  width: 100%;
+}
+.tenant-picker-results {
+  overflow-y: auto;
+}
+.tenant-picker-results a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.65rem;
+  padding: 0.55rem 0.6rem;
+  border-radius: 0.4rem;
+  font-size: 0.875rem;
+}
+.tenant-picker-results a:is(:hover, :focus-visible, [aria-current]) {
+  background: var(--tint);
+}
+.tenant-picker-results :is(strong, small) {
+  display: block;
+  overflow-wrap: anywhere;
+}
+.tenant-picker-results small,
+.tenant-picker-empty {
+  color: var(--muted);
+}
+.tenant-picker-empty {
+  padding: 0.7rem 0.6rem;
+  font-size: 0.875rem;
 }

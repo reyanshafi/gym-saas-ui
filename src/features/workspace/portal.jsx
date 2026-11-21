@@ -24,7 +24,15 @@ import PlatformSettings from "@/features/platform/platform-settings";
 import ProfileMenu from "@/features/workspace/profile-menu";
 import SidebarNav from "@/features/workspace/sidebar-nav";
 
-export default function Portal({ id, section, add, search, memberId, page }) {
+export default function Portal({
+  id,
+  section,
+  add,
+  search,
+  memberId,
+  tenantId,
+  page,
+}) {
   const data = portals[id];
   const source = page?.source ?? section;
   const active = source ? data.sections[source] : null;
@@ -151,7 +159,7 @@ export default function Portal({ id, section, add, search, memberId, page }) {
           ) : id === "platform" && section === "settings" ? (
             <PlatformSettings />
           ) : page?.view === "tenant" ? (
-            <TenantDirectory sections={data.sections} />
+            <TenantDirectory sections={data.sections} tenantId={tenantId} />
           ) : page?.view ? (
             <PlatformRevenue
               sections={data.sections}

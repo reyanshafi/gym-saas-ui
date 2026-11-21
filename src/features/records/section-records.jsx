@@ -7,6 +7,7 @@ import {
   getSectionFields,
 } from "@/features/records/section-fields";
 import { planFeatureIds } from "@/features/platform/plan-entitlements";
+import { tenantDetailsHref } from "@/features/platform/tenant-routes";
 import { usePlatformTable } from "@/features/platform/use-platform-table";
 import { memberTableRows } from "@/features/members/member-table";
 import { portals } from "@/data/catalog/portals";
@@ -121,6 +122,7 @@ export default function SectionRecords({
   ];
   const statusIndex = headings.indexOf("Status");
   const gym = portal === "gym";
+  const tenantList = portal === "platform" && sectionId === "tenants";
   const filterFields =
     {
       gym: {
@@ -503,8 +505,13 @@ export default function SectionRecords({
                     <RecordActions
                       name={record.values[0]}
                       viewLabel={profile ? `View ${label}` : undefined}
+                      viewHref={
+                        tenantList ? tenantDetailsHref(record.id) : undefined
+                      }
                       onView={
-                        profile ? () => openDialog("view", record) : undefined
+                        profile && !tenantList
+                          ? () => openDialog("view", record)
+                          : undefined
                       }
                       onEdit={
                         ledger || page?.manageAccess

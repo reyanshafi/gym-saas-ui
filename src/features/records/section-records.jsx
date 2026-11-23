@@ -31,7 +31,7 @@ import RecordDetails from "@/features/records/record-details";
 import RecordDialog from "@/features/records/record-dialog";
 import PageKpis from "@/shared/ui/page-kpis";
 import { sectionKpis } from "@/features/records/section-kpis";
-import Records from "@/shared/ui/records";
+import PaginatedRecords from "@/shared/ui/paginated-records";
 
 export default function SectionRecords({
   portal,
@@ -495,9 +495,12 @@ export default function SectionRecords({
               </select>
             )}
           </div>
-          <Records
+          <PaginatedRecords
             headings={listHeadings}
             records={listRecords}
+            paginationKey={JSON.stringify([query, status, period, stock, branch, filters])}
+            totalCount={records.length}
+            feedback={feedback}
             actions={
               audit
                 ? undefined
@@ -582,10 +585,6 @@ export default function SectionRecords({
                   )
             }
           />
-          <div className="table-footer">
-            Showing {matches.length} of {records.length}
-            <span role="status">{feedback}</span>
-          </div>
         </section>
         {dialog?.mode === "view" ? (
           <RecordDetails

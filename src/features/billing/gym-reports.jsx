@@ -11,23 +11,18 @@ import {
 import { downloadCsv } from "@/shared/lib/csv";
 import { useGymBranch } from "@/features/workspace/use-gym-branch";
 import PageKpis from "@/shared/ui/page-kpis";
-import Records from "@/shared/ui/records";
+import PaginatedRecords from "@/shared/ui/paginated-records";
+import ReportBreakdown from "@/features/billing/report-breakdown";
 
 import { matchesPeriod, summarize } from "@/shared/lib/reporting";
 
-const reportTypes = [
-  "Revenue Report",
-  "Expense Report",
-  "Profit & Loss Summary",
-  "Payment Collection Report",
-  "Outstanding Payments Report",
-  "Membership Sales Report",
-  "Membership Renewal Report",
-  "Refund Report",
-  "Tax Report",
-  "Branch-wise Financial Report",
-];
-const methods = ["Cash", "UPI", "Card", "Bank transfer", "Other"];
+const reportGroups = {
+  Revenue: ["Revenue Report", "Payment Collection Report", "Branch-wise Financial Report"],
+  Expenses: ["Expense Report"],
+  "Cash flow": ["Profit & Loss Summary"],
+  Billing: ["Outstanding Payments Report", "Refund Report", "Tax Report"],
+  Memberships: ["Membership Sales Report", "Membership Renewal Report"],
+};
 const periods = [
   "All dates",
   "Today",
@@ -71,33 +66,49 @@ export function GymReports({ sections }) {
     "branches",
     sections.branches[4],
   );
-  const [report, setReport] = useState(reportTypes[0]);
+  const [group, setGroup] = useState("Revenue");
+  const [report, setReport] = useState(reportGroups.Revenue[0]);
   const [period, setPeriod] = useState(periods[0]);
   const [branchOverride, setBranch] = useState(null);
   const branch = branchOverride ?? activeBranch;
   const [method, setMethod] = useState("");
   const [start, setStart] = useState("");
   const [end, setEnd] = useState("");
+  const usesPaymentMethod = group !== "Memberships";
+  const selectedMethod = usesPaymentMethod ? method.toLowerCase() : "";
+  const methods = [...new Map([...payments.map(({ values }) => values[5]), ...expenses.map(({ values }) => values[6])]
+    .filter(Boolean)
+    .map((value) => [value.toLowerCase(), value])).values()].sort();
   const memberBranches = new Map(
     members.map(({ values }) => [values[0], values[2]]),
   );
   const filteredPayments = payments.filter(
     ({ values: v }) =>
       matchesPeriod(v[4], period, start, end) &&
-      (!method || method === v[5]) &&
+      (!selectedMethod || selectedMethod === v[5]?.toLowerCase()) &&
       (!branch || branch === memberBranches.get(v[1])),
   );
   const filteredExpenses = expenses.filter(
     ({ values: v }) =>
       matchesPeriod(v[3], period, start, end) &&
       (!branch || branch === v[5]) &&
-      (!method || method === v[6]),
+      (!selectedMethod || selectedMethod === v[6]?.toLowerCase()),
   );
   const total = (records, accessor) =>
     records.reduce((sum, { values }) => sum + accessor(values), 0);
   const revenue = total(filteredPayments, paidAmount);
   const spending = total(filteredExpenses, (v) =>
     v[4] === "Paid" ? money(v[2]) : 0,
+  );
+  const filteredMemberships = memberships.filter(
+    ({ values: v }) =>
+      matchesPeriod(v[2], period, start, end) &&
+      (!branch || memberBranches.get(v[0]) === branch),
+  );
+  const filteredRenewals = renewals.filter(
+    ({ values: v }) =>
+      matchesPeriod(v[2], period, start, end) &&
+      (!branch || memberBranches.get(v[0]) === branch),
   );
   const reports = {
     "Revenue Report": summarize(
@@ -116,7 +127,7 @@ export function GymReports({ sections }) {
       ["Collections", revenue],
       ["Paid expenses", spending],
       ["Difference", revenue - spending],
-    ].map(([key, value]) => ({ key, label: inr(value) })),
+    ].map(([key, value]) => ({ key, value, label: inr(value) })),
     "Payment Collection Report": summarize(
       filteredPayments,
       (v) => v[5],
@@ -130,25 +141,17 @@ export function GymReports({ sections }) {
       inr,
     ),
     "Membership Sales Report": summarize(
-      memberships.filter(
-        ({ values: v }) =>
-          matchesPeriod(v[2], period, start, end) &&
-          (!branch || memberBranches.get(v[0]) === branch),
-      ),
+      filteredMemberships,
       (v) => v[1],
       () => 1,
     ),
     "Membership Renewal Report": summarize(
-      renewals.filter(
-        ({ values: v }) =>
-          matchesPeriod(v[2], period, start, end) &&
-          (!branch || memberBranches.get(v[0]) === branch),
-      ),
+      filteredRenewals,
       (v) => v[3],
       () => 1,
     ),
     "Refund Report": summarize(
-      filteredPayments.filter(({ values }) => values[3] === "Adjustment"),
+      filteredPayments.filter(({ values }) => values[3] === "Adjustment" && paidAmount(values) < 0),
       (v) => v[1],
       (v) => -paidAmount(v),
       inr,
@@ -166,11 +169,22 @@ export function GymReports({ sections }) {
       inr,
     ),
   };
+  const reportRows = reports[report];
+  const headings = [report === "Revenue Report" || report === "Tax Report" ? "Month" : "Category", usesPaymentMethod ? "Amount" : "Count"];
   return (
-    <>
+    <div className="gym-financial-reports">
+      <div className="workspace-section-tabs finance-report-tabs" role="group" aria-label="Report categories">
+        {Object.keys(reportGroups).map((name) => (
+          <button key={name} type="button" aria-pressed={name === group} onClick={() => {
+            if (name === group) return;
+            setGroup(name);
+            setReport(reportGroups[name][0]);
+          }}>{name}</button>
+        ))}
+      </div>
       <PageKpis
-        label="Selected period financial summary"
-        items={[
+        label={usesPaymentMethod ? "Selected period financial summary" : "Selected period membership summary"}
+        items={usesPaymentMethod ? [
           ["Net collections", inr(revenue)],
           ["Paid expenses", inr(spending)],
           [
@@ -182,9 +196,14 @@ export function GymReports({ sections }) {
             "Outstanding payments",
             inr(total(filteredPayments, outstandingAmount)),
           ],
+        ] : [
+          ["Membership records", filteredMemberships.length],
+          ["Renewed", filteredRenewals.filter(({ values }) => values[3] === "Renewed").length],
+          ["Due", filteredRenewals.filter(({ values }) => values[3] === "Due").length],
+          ["Overdue", filteredRenewals.filter(({ values }) => values[3] === "Overdue").length],
         ]}
       />
-      <section className="panel">
+      <section className="panel" aria-label="Report filters">
         <div className="panel-header">
           <h2>{report}</h2>
           <button
@@ -193,8 +212,8 @@ export function GymReports({ sections }) {
             onClick={() =>
               downloadCsv(
                 "financial-report.csv",
-                ["Category", "Value"],
-                reports[report].map(({ key, label }) => [key, label]),
+                headings,
+                reportRows.map(({ key, value }) => [key, value]),
               )
             }
           >
@@ -205,16 +224,16 @@ export function GymReports({ sections }) {
           </button>
         </div>
         <div className="table-tools">
-          <select
+          {reportGroups[group].length > 1 && <select
             className="filter-select"
             aria-label="Report"
             value={report}
             onChange={(e) => setReport(e.target.value)}
           >
-            {reportTypes.map((t) => (
+            {reportGroups[group].map((t) => (
               <option key={t}>{t}</option>
             ))}
-          </select>
+          </select>}
           <select
             className="filter-select"
             aria-label="Period"
@@ -254,26 +273,33 @@ export function GymReports({ sections }) {
               <option key={id}>{values[0]}</option>
             ))}
           </select>
-          <select
+          {usesPaymentMethod && <select
             className="filter-select"
             aria-label="Payment method"
-            value={method}
+            value={selectedMethod}
             onChange={(e) => setMethod(e.target.value)}
           >
             <option value="">All methods</option>
             {methods.map((t) => (
-              <option key={t}>{t}</option>
+              <option key={t} value={t.toLowerCase()}>{t}</option>
             ))}
-          </select>
+          </select>}
         </div>
-        <Records
-          headings={["Category", "Value"]}
-          records={reports[report].map(({ key, label }) => ({
+      </section>
+      <div className="finance-report-results">
+        <ReportBreakdown title="Breakdown" rows={reportRows} chronological={headings[0] === "Month"} />
+        <section className="panel finance-report-table">
+          <header className="panel-header"><h2>Report details</h2><p>{reportRows.length} rows</p></header>
+        <PaginatedRecords
+          headings={headings}
+          paginationKey={JSON.stringify([report, period, branch, selectedMethod, start, end])}
+          records={reportRows.map(({ key, label }) => ({
             id: key,
             values: [key, label],
           }))}
         />
-      </section>
-    </>
+        </section>
+      </div>
+    </div>
   );
 }

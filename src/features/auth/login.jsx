@@ -2,7 +2,10 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Activity, Building2, Eye, EyeOff, ShieldCheck } from "lucide-react";
+import {
+  Activity, ArrowRight, Building2, Check, Eye, EyeOff,
+  LockKeyhole, Mail, ShieldCheck,
+} from "lucide-react";
 
 const workspaces = [
   {
@@ -31,11 +34,11 @@ export default function LoginPage() {
           <span className="brand-mark">
             <Activity size={20} />
           </span>
-          GymSaas
+          Gypptiro
         </div>
         <div className="login-form">
-          <h1>Sign in to GymSaas</h1>
-          <p className="login-intro">Select the workspace you want to open.</p>
+          <h1>Sign in</h1>
+          <p className="login-intro">Choose your workspace to continue.</p>
           <form
             onSubmit={(event) => {
               event.preventDefault();
@@ -52,27 +55,34 @@ export default function LoginPage() {
                     checked={id === portal}
                     onChange={() => setPortal(id)}
                   />
-                  <Icon size={18} aria-hidden="true" />
+                  <span className="login-role-icon">
+                    <Icon size={18} aria-hidden="true" />
+                  </span>
                   <span>
                     <strong>{label}</strong>
                     <small>{description}</small>
                   </span>
+                  {id === portal && <Check className="login-role-check" size={14} aria-hidden="true" />}
                 </label>
               ))}
             </fieldset>
             <label className="login-field" htmlFor="email">
               <span>Email address</span>
-              <input
-                id="email"
-                type="email"
-                placeholder="you@example.com"
-                autoComplete="off"
-                required
-              />
+              <span className="login-input">
+                <Mail size={17} aria-hidden="true" />
+                <input
+                  id="email"
+                  type="email"
+                  placeholder="you@example.com"
+                  autoComplete="off"
+                  required
+                />
+              </span>
             </label>
             <div className="login-field">
               <label htmlFor="password">Password</label>
-              <div className="password-field">
+              <div className="login-input password-field">
+                <LockKeyhole size={17} aria-hidden="true" />
                 <input
                   id="password"
                   type={showPassword ? "text" : "password"}
@@ -91,7 +101,7 @@ export default function LoginPage() {
               </div>
             </div>
             <button className="button primary login-submit" type="submit">
-              Open workspace
+              Open workspace <ArrowRight size={17} aria-hidden="true" />
             </button>
           </form>
           <p className="demo-note">
@@ -101,7 +111,7 @@ export default function LoginPage() {
       </section>
       <aside className="login-art" aria-hidden="true">
         <div className="login-caption">
-          <p>GymSaas for gyms</p>
+          <p>Gypptiro for gyms</p>
           <strong>
             Focus on the floor.
             <br />

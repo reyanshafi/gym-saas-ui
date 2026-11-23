@@ -1,5 +1,11 @@
 import { platformExtraSections } from "@/data/catalog/platform-pages";
 import {
+  demoPlatformPayments,
+  demoSubscriptions,
+  demoSupport,
+  demoTenants,
+} from "@/data/catalog/platform-demo-records";
+import {
   Building2,
   CircleHelp,
   RefreshCw,
@@ -12,7 +18,7 @@ import {
 
 export const platformPortal = {
   name: "Super Admin",
-  workspace: "GymSaas Platform",
+  workspace: "Gypptiro Platform",
   initials: "RP",
   admin: "Alex Morgan",
   summary: "Here’s how your SaaS business is performing.",
@@ -40,8 +46,9 @@ export const platformPortal = {
         ],
         ["Forge Athletics", "Scale", "8", "Active"],
         ["Motion Club", "Starter", "1", "Trial"],
-        ["Core Collective", "Growth", "2", "Active"],
+        ["Core Collective", "Growth", "2", "Active", "Leena Roy", "leena@example.com", "2026-08-12"],
         ["Northline Gym", "Starter", "1", "Suspended"],
+        ...demoTenants,
       ],
     ],
     subscriptions: [
@@ -100,6 +107,7 @@ export const platformPortal = {
           "2026-11-17",
           "Other",
         ],
+        ...demoPlatformPayments,
       ],
     ],
 
@@ -113,6 +121,7 @@ export const platformPortal = {
         ["Forge Athletics", "Scale", "Annual", "2027-03-15", "Active"],
         ["Motion Club", "Starter", "Monthly", "2026-11-28", "Trial"],
         ["Northline Gym", "Starter", "Monthly", "2026-11-18", "Past due"],
+        ...demoSubscriptions,
       ],
     ],
     support: [
@@ -145,6 +154,7 @@ export const platformPortal = {
           "Priya Shah",
           "2026-11-16",
         ],
+        ...demoSupport,
       ],
     ],
     access: [

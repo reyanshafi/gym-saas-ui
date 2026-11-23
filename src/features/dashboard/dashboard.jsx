@@ -1,11 +1,12 @@
 import Link from "next/link";
-import { ChevronRight } from "lucide-react";
+import { ArrowUpRight, ChevronRight } from "lucide-react";
 import { useRecords } from "@/data/records/use-records";
 import Records from "@/shared/ui/records";
 import { platformMetrics } from "@/features/platform/platform-metrics";
 import { paidAmount } from "@/features/billing/gym-finance";
 import { summarize } from "@/shared/lib/reporting";
 import RevenueChart from "@/features/dashboard/revenue-chart";
+import PlatformOverviewInsights from "@/features/dashboard/platform-overview-insights";
 
 export default function Dashboard({ id, data }) {
   const { records: tenants } = useRecords(
@@ -27,7 +28,7 @@ export default function Dashboard({ id, data }) {
   const revenue = summarize(payments, (v) => v[4]?.slice(0, 7), paidAmount);
   return (
     <>
-      <div className="metrics">
+      <div className="metrics overview-headlines" aria-label="Key platform metrics">
         {metrics.map(([label, value, change, Icon, destination]) => {
           const increased = change.startsWith("+");
           return (
@@ -44,11 +45,12 @@ export default function Dashboard({ id, data }) {
               </div>
               <strong>{value}</strong>
               <small className={increased ? "positive" : ""}>{change}</small>
+              <ArrowUpRight className="overview-kpi-arrow" size={16} aria-hidden="true" />
             </Link>
           );
         })}
       </div>
-      <div className="dashboard-grid">
+      <div className="dashboard-grid overview-spotlight">
         <RevenueChart title={data.revenue} rows={revenue} />
         <section className="panel dashboard-links">
           <div className="panel-header">
@@ -70,6 +72,7 @@ export default function Dashboard({ id, data }) {
           })}
         </section>
       </div>
+      <PlatformOverviewInsights tenants={tenants} subscriptions={subscriptions} payments={payments} />
       <div className="overview-tables">
         <OverviewTable
           portal={id}
@@ -93,7 +96,11 @@ function OverviewTable({ portal, sectionKey, section, title }) {
   const columns = [0, 1, headings.indexOf("Status")].filter(
     (index) => index >= 0,
   );
-  const preview = records.slice(0, 4).map((record) => ({
+  const dateColumn = sectionKey === "tenants" ? 6 : headings.indexOf("Opened date");
+  const recentRecords = [...records].sort((a, b) =>
+    (b.values[dateColumn] ?? "").localeCompare(a.values[dateColumn] ?? ""),
+  );
+  const preview = recentRecords.slice(0, 4).map((record) => ({
     ...record,
     values: columns.map((index) => record.values[index]),
   }));

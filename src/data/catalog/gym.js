@@ -1,4 +1,5 @@
 import { gymSubsections } from "@/data/catalog/gym-subsections";
+import { demoMemberships } from "@/data/catalog/gym-demo-records";
 import {
   BarChart3,
   Bell,
@@ -23,7 +24,10 @@ export const gymSections = {
     "Member Memberships",
     "Manage individual purchases and membership lifecycle.",
     ["Member", "Plan", "Start date", "End date", "Status"],
-    [["Aarav Sharma", "Annual Pro", "2026-10-12", "2027-10-12", "Active"]],
+    [
+      ["Aarav Sharma", "Annual Pro", "2026-10-12", "2027-10-12", "Active"],
+      ...demoMemberships,
+    ],
   ],
   inventory: [
     Boxes,
@@ -33,6 +37,10 @@ export const gymSections = {
     [
       ["Whey protein", "Supplements", "6", "10", "Peak Nutrition"],
       ["Training gloves", "Accessories", "24", "8", "Summit Supply"],
+      ["Electrolyte sachets", "Supplements", "38", "15", "Peak Nutrition"],
+      ["Resistance bands", "Accessories", "5", "8", "Summit Supply"],
+      ["Shaker bottle", "Accessories", "22", "10", "Summit Supply"],
+      ["Recovery drink", "Beverages", "9", "12", "Peak Nutrition"],
     ],
   ],
   notifications: [
@@ -70,7 +78,10 @@ export const gymSections = {
     "Activity Logs",
     "Review administrative activity in this browser.",
     ["Event", "User", "Module", "Date", "Branch"],
-    [],
+    [
+      ["Staff account created", "Maya Patel", "Staff Management", "2026-11-22", "Whitefield"],
+      ["Staff role updated", "Maya Patel", "Staff Management", "2026-11-19", "Koramangala"],
+    ],
   ],
   reports: [
     BarChart3,

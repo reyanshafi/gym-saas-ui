@@ -36,6 +36,7 @@ const statusSummaries = {
     staff: [3, "Staff members", ["Active", "Inactive"]],
     branches: [3, "Branches", ["Active", "Inactive"]],
     notifications: [4, "Communication items", ["Active", "Draft", "Disabled"]],
+    "staff-leave": [4, "Leave requests", ["Pending", "Approved", "Rejected"]],
   },
   platform: {
     tenants: [3, "Tenants", ["Active", "Trial", "Suspended"]],
@@ -49,6 +50,33 @@ const statusSummaries = {
 export function sectionKpis(portal, section, records) {
   if (section === "finance") return paymentKpis(records);
   const rows = records.map((record) => record.values);
+  if (portal === "gym" && section === "recurring-expenses") {
+    const monthly = rows.filter((row) => row[3]?.toLowerCase() === "monthly");
+    const nextDate = rows.map((row) => row[4]).filter(Boolean).sort()[0];
+    return [
+      ["Recurring expenses", rows.length],
+      ["Monthly commitments", inr(monthly.reduce((sum, row) => sum + money(row[2]), 0))],
+      ["Earliest scheduled date", nextDate || "—"],
+    ];
+  }
+  if (portal === "gym" && section === "purchases") {
+    return [
+      ["Purchase records", rows.length],
+      ["Units purchased", rows.reduce((sum, row) => sum + money(row[2]), 0)],
+      ["Purchase total", inr(rows.reduce((sum, row) => sum + money(row[3]), 0))],
+      ["Suppliers", new Set(rows.map((row) => row[1]).filter(Boolean)).size],
+    ];
+  }
+  if (portal === "gym" && section === "staff-compensation") {
+    const total = (status) => rows.reduce(
+      (sum, row) => sum + (row[4] === status ? money(row[2]) : 0), 0,
+    );
+    return [
+      ["Compensation records", rows.length],
+      ["Paid compensation", inr(total("Paid"))],
+      ["Pending compensation", inr(total("Pending"))],
+    ];
+  }
   if (portal === "gym" && section === "expenses") {
     const paid = rows.filter((row) => row[4] === "Paid");
     const pending = rows.filter((row) => row[4] === "Pending");

@@ -1,11 +1,8 @@
 import "@fontsource-variable/inter";
-import "./globals.css";
-import "@/shared/styles/management.css";
-import "@/features/records/record-form-drawer.css";
-import "@/features/dashboard/gym-dashboard.css";
+import "@/shared/styles/application.css";
 
 export const metadata = {
-  title: { default: "GymSaas", template: "%s · GymSaas" },
+  title: { default: "Gypptiro", template: "%s · Gypptiro" },
   description: "Gym and platform management workspace",
 };
 

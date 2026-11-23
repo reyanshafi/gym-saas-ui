@@ -17,7 +17,7 @@ export default async function Page({ params, searchParams }) {
   const { add, q, member, tenant } = await searchParams;
   return (
     <Portal
-      key={section + (add ?? "") + (q ?? "") + (member ?? "")}
+      key={JSON.stringify([section, add, q, member])}
       id={portal}
       section={section}
       page={page}

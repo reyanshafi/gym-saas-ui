@@ -15,7 +15,7 @@ const compact = new Intl.NumberFormat("en-IN", {
 });
 
 export default function RevenueChart({ title, rows }) {
-  const [range, setRange] = useState(6);
+  const [range, setRange] = useState(12);
   const byMonth = new Map(
     rows
       .filter(({ key }) => /^\d{4}-\d{2}$/.test(key))
@@ -48,12 +48,19 @@ export default function RevenueChart({ title, rows }) {
             value={range}
             onChange={(event) => setRange(Number(event.target.value))}
           >
+            <option value={12}>Last 12 months</option>
             <option value={6}>Last 6 months</option>
             <option value={3}>Last 3 months</option>
           </select>
           <ChevronDown size={15} />
         </label>
       </div>
+      {periods.length > 0 && (
+        <div className="overview-revenue-total">
+          <strong>{inr(values.reduce((sum, value) => sum + value, 0))}</strong>
+          <span>Net total over {range} months</span>
+        </div>
+      )}
       {periods.length ? (
         <div className="gym-trend">
           <div className="gym-axis" aria-hidden="true">
@@ -63,6 +70,7 @@ export default function RevenueChart({ title, rows }) {
           </div>
           <div
             className="gym-plot"
+            data-range={periods.length}
             style={{
               "--period-count": periods.length,
               "--zero": (-min / span) * 100 + "%",

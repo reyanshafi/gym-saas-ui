@@ -1,16 +1,21 @@
 @import "tailwindcss";
-@import "../src/shared/styles/workspace.css";
-@import "../src/shared/styles/login.css";
+@import "./workspace.css";
+@import "./login.css";
+@import "./management.css";
+@import "../../features/records/record-form-drawer.css";
+@import "../../features/dashboard/gym-dashboard.css";
 
 :root {
   --font-sans: "Inter Variable", "Segoe UI", system-ui, sans-serif;
-  --canvas: #f4f6f4;
+  --canvas: #f7f5f2;
   --surface: #fff;
-  --ink: #17241e;
-  --muted: #53635b;
-  --line: #dce4de;
-  --accent: #176544;
-  --tint: #e8f2eb;
+  --ink: #252123;
+  --muted: #665e61;
+  --line: #e9e1dc;
+  --burgundy: #660000;
+  --burgundy-tint: #f8ebec;
+  --accent: var(--burgundy);
+  --tint: var(--burgundy-tint);
   --nav: #172820;
 }
 

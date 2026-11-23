@@ -1,6 +1,8 @@
 import { useState } from "react";
 import Link from "next/link";
 import {
+  ArrowUpRight,
+  ChartNoAxesCombined,
   Bell,
   Building2,
   CalendarClock,
@@ -29,6 +31,7 @@ const metrics = [
   [Wallet, "reports"],
   [CircleDollarSign, "finance"],
 ];
+const headlineMetricIndexes = [6, 1, 4, 7];
 const actions = [
   ["Add New Member", "members", UserPlus],
   ["Create Membership", "member-subscriptions", ClipboardList],
@@ -44,9 +47,10 @@ const monthFormat = new Intl.DateTimeFormat("en-IN", {
   month: "short",
   timeZone: "UTC",
 });
+const activityDateColumns = { members: 6, finance: 4, renewals: 2, expenses: 3, activity: 3 };
 
 export default function GymDashboardView({ totals, charts, alerts, feed }) {
-  const [range, setRange] = useState(3);
+  const [range, setRange] = useState(12);
   const [revenue, growth, plans, expenses, branches] = charts;
   const observedMonths = [revenue, growth, expenses]
     .flatMap(([, rows]) => rows.map(({ key }) => key))
@@ -64,25 +68,14 @@ export default function GymDashboardView({ totals, charts, alerts, feed }) {
 
   return (
     <div className="gym-overview">
-      <div className="panel gym-kpis">
-        {totals.map(([label, value, detail], index) => {
+      <div className="gym-kpis overview-headlines" aria-label="Key gym metrics">
+        {headlineMetricIndexes.map((index) => {
+          const [label, value, detail] = totals[index];
           const [Icon, destination] = metrics[index];
           return (
             <Link
               href={`/gym/${destination}`}
               className="gym-kpi"
-              data-tone={
-                [
-                  "primary",
-                  "primary",
-                  "rose",
-                  "blue",
-                  "amber",
-                  "blue",
-                  "primary",
-                  "amber",
-                ][index]
-              }
               key={label}
             >
               <span className="gym-kpi-icon">
@@ -98,15 +91,21 @@ export default function GymDashboardView({ totals, charts, alerts, feed }) {
                   {detail.context}
                 </small>
               </div>
+              <ArrowUpRight className="overview-kpi-arrow" size={16} aria-hidden="true" />
             </Link>
           );
         })}
       </div>
       <section className="gym-analytics" aria-label="Analytics">
         <header className="gym-overview-heading">
-          <div>
-            <h2>Performance</h2>
-            <p>Collections, membership growth, and operating costs</p>
+          <div className="gym-section-title">
+            <span className="gym-section-icon" aria-hidden="true">
+              <ChartNoAxesCombined size={20} />
+            </span>
+            <div>
+              <h2>Performance</h2>
+              <p>Collections, membership growth, and operating costs</p>
+            </div>
           </div>
           <label className="gym-range">
             Trend range{" "}
@@ -121,37 +120,76 @@ export default function GymDashboardView({ totals, charts, alerts, feed }) {
             </select>
           </label>
         </header>
-        <div className="gym-chart-grid gym-chart-featured">
-          <Trend
-            title={revenue[0]}
-            rows={revenue[1]}
-            periods={periods}
-            currency
-            featured
-          />
-          <section
-            className="panel gym-quick-actions"
-            aria-label="Quick actions"
-          >
-            <div className="panel-header">
-              <h2>Quick actions</h2>
+        <div className="gym-chart-grid gym-chart-featured overview-workbench">
+          <div className="overview-revenue-stack">
+            <Trend
+              title={revenue[0]}
+              rows={revenue[1]}
+              periods={periods}
+              currency
+              featured
+            />
+            <div className="panel gym-kpis overview-supporting-metrics" aria-label="Additional gym metrics">
+              {totals.map(([label, value, detail], index) => {
+                if (headlineMetricIndexes.includes(index)) return null;
+                const [, destination] = metrics[index];
+                return (
+                  <Link className="overview-supporting-metric" href={`/gym/${destination}`} key={label}>
+                    <span>{label}</span>
+                    <strong>{value}</strong>
+                    <small className="gym-kpi-detail">
+                      {detail.delta && <b data-trend={detail.trend}>{detail.delta} </b>}
+                      {detail.context}
+                    </small>
+                    <ArrowUpRight className="overview-kpi-arrow" size={16} aria-hidden="true" />
+                  </Link>
+                );
+              })}
             </div>
-            <div className="gym-action-grid">
-              {actions.map(([label, key, Icon], index) => (
-                <Link
-                  className="gym-action-tile"
-                  data-primary={index === 0 || undefined}
-                  key={key}
-                  href={`/gym/${key}?add=1`}
-                >
-                  <span className="gym-action-icon">
-                    <Icon size={18} aria-hidden="true" />
-                  </span>
+          </div>
+          <div className="overview-action-stack">
+            <section
+              className="panel gym-quick-actions"
+              aria-label="Quick actions"
+            >
+              <div className="panel-header">
+                <h2>Quick actions</h2>
+              </div>
+              <div className="gym-action-grid">
+                {actions.map(([label, key, Icon], index) => (
+                  <Link
+                    className="gym-action-tile"
+                    data-primary={index === 0 || undefined}
+                    key={key}
+                    href={`/gym/${key}?add=1`}
+                  >
+                    <span className="gym-action-icon">
+                      <Icon size={18} aria-hidden="true" />
+                    </span>
+                    <span>{label}</span>
+                    {index === 0 && <ArrowUpRight size={16} aria-hidden="true" />}
+                  </Link>
+                ))}
+              </div>
+            </section>
+            <section className="panel gym-overview-list">
+              <div className="panel-header">
+                <h2>
+                  <Bell size={18} /> Important alerts
+                </h2>
+              </div>
+              {alerts.map(([label, value, key]) => (
+                <Link href={`/gym/${key}`} key={label}>
                   <span>{label}</span>
+                  <strong className={value ? "attention" : ""}>{value}</strong>
                 </Link>
               ))}
-            </div>
-          </section>
+              <Link href="/gym/settings">
+                <span>SaaS subscription renewal</span>
+                <strong>Demo</strong>
+              </Link>
+            </section>
+          </div>
         </div>
         <div className="gym-chart-grid">
           <Trend title={growth[0]} rows={growth[1]} periods={periods} />
@@ -168,24 +206,7 @@ export default function GymDashboardView({ totals, charts, alerts, feed }) {
           <BranchMemberships title={branches[0]} rows={branches[1]} />
         </div>
       </section>
-      <div className="gym-chart-grid">
-        <section className="panel gym-overview-list">
-          <div className="panel-header">
-            <h2>
-              <Bell size={18} /> Important alerts
-            </h2>
-          </div>
-          {alerts.map(([label, value, key]) => (
-            <Link href={`/gym/${key}`} key={label}>
-              <span>{label}</span>
-              <strong className={value ? "attention" : ""}>{value}</strong>
-            </Link>
-          ))}
-          <Link href="/gym/settings">
-            <span>SaaS subscription renewal</span>
-            <strong>Demo</strong>
-          </Link>
-        </section>
+      <div className="overview-activity">
         <section className="panel gym-overview-list">
           <div className="panel-header">
             <h2>
@@ -197,7 +218,11 @@ export default function GymDashboardView({ totals, charts, alerts, feed }) {
               <span>
                 {title}
                 <small>
-                  {rows
+                  {[...rows]
+                    .sort((a, b) => {
+                      const column = activityDateColumns[key];
+                      return (b.values[column] ?? "").localeCompare(a.values[column] ?? "");
+                    })
                     .slice(0, 2)
                     .map(({ values }) => values[0])
                     .join(", ") || "No activity yet"}
@@ -370,7 +395,7 @@ function Trend({ title, rows, periods, currency, tone, featured }) {
   );
 }
 
-const planColors = ["#193e76", "#527fbd", "#8eaad4", "#476f9d", "#7686b2"];
+const planColors = ["var(--accent)", "#9f4a59", "#bf8390", "#985e6b", "#aa707d"];
 const percent = new Intl.NumberFormat("en-IN", {
   style: "percent",
   maximumFractionDigits: 1,

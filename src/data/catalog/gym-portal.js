@@ -1,4 +1,5 @@
 import { gymSections } from "@/data/catalog/gym";
+import { demoExpenses, demoMembers, demoPayments, demoRenewals } from "@/data/catalog/gym-demo-records";
 import {
   Building2,
   CalendarDays,
@@ -16,7 +17,7 @@ export const gymPortal = {
   workspace: "Summit Fitness",
   initials: "SF",
   admin: "Maya Patel",
-  summary: "Here’s what’s happening across your gym today.",
+  summary: "Track memberships, revenue, and upcoming renewals across your branches.",
   revenue: "Membership revenue",
   metrics: [
     ["Monthly revenue", "₹4,82,500", "+12.8%", Wallet],
@@ -50,6 +51,7 @@ export const gymPortal = {
         ["Rohan Mehta", "Quarterly Plus", "Indiranagar", "Expiring"],
         ["Ananya Nair", "Annual Pro", "Whitefield", "Active"],
         ["Dev Kapoor", "Monthly Core", "Whitefield", "Expired"],
+        ...demoMembers,
       ],
     ],
     memberships: [
@@ -99,6 +101,7 @@ export const gymPortal = {
         ["GYM-1042", "Aarav Sharma", "₹17,999", "Paid", "2026-11-20", "UPI"],
         ["GYM-1041", "Isha Rao", "₹1,999", "Paid", "2026-11-19", "Card"],
         ["GYM-1040", "Rohan Mehta", "₹5,499", "Pending", "2026-11-20", "Cash"],
+        ...demoPayments,
       ],
     ],
     branches: [
@@ -144,6 +147,10 @@ export const gymPortal = {
         ["Maya Patel", "Gym Admin", "All branches", "Active"],
         ["Kabir Singh", "Trainer", "Indiranagar", "Active"],
         ["Riya Menon", "Front Desk", "Whitefield", "Active"],
+        ["Leena Fernandes", "Manager", "Koramangala", "Active", "EMP-004", "Branch Manager", "2026-01-08", "leena@example.com"],
+        ["Neil D'Souza", "Trainer", "Koramangala", "Active", "EMP-005", "Strength Coach", "2026-04-15", "neil@example.com"],
+        ["Farah Khan", "Accountant", "All branches", "Active", "EMP-006", "Accounts Lead", "2026-05-05", "farah@example.com"],
+        ["Milan Shetty", "Trainer", "Whitefield", "Active", "EMP-007", "Personal Trainer", "2026-11-22", "milan@example.com"],
       ],
     ],
 
@@ -156,6 +163,7 @@ export const gymPortal = {
         ["Rohan Mehta", "Quarterly Plus", "2026-11-24", "Due"],
         ["Dev Kapoor", "Monthly Core", "2026-11-15", "Overdue"],
         ["Isha Rao", "Monthly Core", "2026-11-29", "Renewed"],
+        ...demoRenewals,
       ],
     ],
     expenses: [
@@ -177,6 +185,7 @@ export const gymPortal = {
         ["Equipment servicing", "Maintenance", "₹12,500", "2026-11-19", "Paid"],
         ["November rent", "Rent", "₹68,000", "2026-11-01", "Paid"],
         ["Cleaning supplies", "Supplies", "₹3,200", "2026-11-18", "Pending"],
+        ...demoExpenses,
       ],
     ],
     settings: [

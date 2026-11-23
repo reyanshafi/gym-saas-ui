@@ -1,4 +1,4 @@
-# GymSaas frontend
+# Gypptiro frontend
 
 Run `npm ci` to install dependencies, `npm run dev` to start development, and `npm run build` to check the production build.
 

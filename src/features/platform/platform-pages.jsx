@@ -9,7 +9,9 @@ import { matchesPeriod, summarize } from "@/shared/lib/reporting";
 import { downloadCsv } from "@/shared/lib/csv";
 import PageKpis from "@/shared/ui/page-kpis";
 import { paymentKpis } from "@/features/records/section-kpis";
+import { collectionsByPlan } from "@/features/platform/platform-metrics";
 import Records from "@/shared/ui/records";
+import PaginatedRecords from "@/shared/ui/paginated-records";
 
 export function TenantDirectory({ sections, tenantId }) {
   const { records } = useRecords("platform", "tenants", sections.tenants[4]);
@@ -112,16 +114,9 @@ export function PlatformRevenue({ sections, byPlan }) {
   const selected = payments.filter(({ values }) =>
     matchesPeriod(values[4], period, start, end),
   );
-  const groups = new Map(tenants.map(({ values }) => [values[0], values[1]]));
-  for (const { values } of subscriptions)
-    if (["Active", "Trial", "Past due"].includes(values[4]))
-      groups.set(values[0], values[1]);
-  const results = summarize(
-    selected,
-    (v) => (byPlan ? groups.get(v[1]) : v[4]?.slice(0, 7)),
-    paidAmount,
-    inr,
-  );
+  const results = byPlan
+    ? collectionsByPlan(selected, tenants, subscriptions)
+    : summarize(selected, (values) => values[4]?.slice(0, 7), paidAmount, inr);
   const maximum = Math.max(1, ...results.map(({ value }) => Math.abs(value)));
   return (
     <>
@@ -212,8 +207,9 @@ export function PlatformRevenue({ sections, byPlan }) {
             Export CSV
           </button>
         </div>
-        <Records
+        <PaginatedRecords
           headings={[byPlan ? "Plan" : "Month", "Net collections"]}
+          paginationKey={JSON.stringify([byPlan, period, start, end])}
           records={results.map(({ key, label }) => ({
             id: key,
             values: [key, label],

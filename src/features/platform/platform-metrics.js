@@ -4,7 +4,17 @@ import {
   outstandingAmount,
   paidAmount,
 } from "@/features/billing/gym-finance";
-import { matchesPeriod } from "@/shared/lib/reporting";
+import { matchesPeriod, summarize } from "@/shared/lib/reporting";
+
+export function collectionsByPlan(payments, tenants, subscriptions) {
+  const plans = new Map(tenants.map(({ values }) => [values[0], values[1]]));
+  for (const { values } of subscriptions) {
+    if (["Active", "Trial", "Past due"].includes(values[4])) {
+      plans.set(values[0], values[1]);
+    }
+  }
+  return summarize(payments, (values) => plans.get(values[1]), paidAmount, inr);
+}
 
 export function platformMetrics(tenants, subscriptions, payments) {
   const revenue = (period) =>

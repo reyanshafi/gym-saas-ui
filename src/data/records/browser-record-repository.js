@@ -1,8 +1,8 @@
 /** @typedef {{ id: string, values: string[] }} WorkspaceRecord */
 /** @typedef {{ portal: string, section: string }} RecordScope */
 
-const prefix = "GymSaas:";
-const changeEvent = "GymSaas:records";
+const prefix = "Gypptiro:";
+const changeEvent = "Gypptiro:records";
 
 /** @param {RecordScope} scope */
 function storageKey({ portal, section }) {

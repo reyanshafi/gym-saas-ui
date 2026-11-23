@@ -11,7 +11,7 @@
   background: var(--canvas);
 }
 .shell.gym {
-  --gym-panel-surface: #f5eeed;
+  --gym-panel-surface: #f9f8f7;
   --canvas: var(--gym-panel-surface);
   --ink: #252123;
   --muted: #665e61;
@@ -22,18 +22,19 @@
   --chart-fill: #b66b70;
 }
 .shell.platform {
+  --canvas: #f9f8f7;
   --accent: #3b3923;
   --tint: #efeee6;
 }
 .shell.platform .main-area {
-  background-image: linear-gradient(to bottom, #3b39230a 1px, transparent 1px);
+  background-image: linear-gradient(to bottom, #3b392305 1px, transparent 1px);
   background-size: 100% 48px;
 }
 .shell.gym .main-area {
   background-color: var(--gym-panel-surface);
   background-image:
-    linear-gradient(to right, #66000008 1px, transparent 1px),
-    linear-gradient(to bottom, #66000008 1px, transparent 1px);
+    linear-gradient(to right, #66000005 1px, transparent 1px),
+    linear-gradient(to bottom, #66000005 1px, transparent 1px);
   background-size: 80px 80px;
 }
 .sidebar {
